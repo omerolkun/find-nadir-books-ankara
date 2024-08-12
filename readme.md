@@ -26,5 +26,5 @@ Pull requests are welcome.
 ## Project Roadmap
  * [x] Find by book name.
  * [ ] List the books by the author.
- * [ ] Send the result list mail to the user.
+ * [x] Send the result list mail to the user.
  * [ ] Add a front end for the project.
