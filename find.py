@@ -50,26 +50,24 @@ for seller in result_urls:
         for single_row in rows:
             name = single_row.find('a')['title']
             price = single_row.find(class_="col-md-6 col-xs-12 no-padding text-right product-list-price").string
-            tup = (seller_name, name, price)
+            price_spl = price.split(',')
+            int_price = int(price_spl[0])
+            tup = (seller_name, name, int_price)
             result_list.append(tup)
 
 for x in result_list:
     print(x)
 end_time = time.time()
 print("Total Executione time: ", (end_time - start_time) / 60, "minutes...")
-'''
 file_name = sys.argv[1]
 mail_message = "Subject: {} \n\n".format(sys.argv[1])
 file = open('/home/om/Documents/ankaradakisahafkitap/{}.txt'.format(file_name), 'w')
-result_message = "Toplam " + str(len(res_list)) + " kitap bulunmustur."
+result_message = "Toplam " + str(len(result_list)) + " kitap bulunmustur."
 file.write(result_message)
-a = res_list[0][2]
-print("type of 131.line a: ", type(a))
-res_list.sort(key=lambda a: a[2])
-for obj in res_list:
+result_list.sort(key=lambda a: a[2])
+for obj in result_list:
     mail_message = mail_message + " " + obj[0] + "-" + "-" + obj[1] + "-" + str(obj[2]) + '\n\n'
     file.write(obj[0] + "-" + "-" + obj[1] + "-" + str(obj[2]) + '\n\n')
 time.sleep(14)
 msg = mail_message.encode('utf-8')
 mailahmet(msg)
-'''
