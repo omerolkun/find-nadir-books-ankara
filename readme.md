@@ -8,8 +8,8 @@ Install the following libraries:
 ## Linux
 ```bash
 sudo apt update
-pip3 install selenium
-pip3 install selenium-stealth
+pip3 install requests 
+pip3 install beautifulsoup4
 ```
 ## Usage
 Once run scrape_url.py file to add the seller urls to your local database.<br>
