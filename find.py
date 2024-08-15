@@ -100,8 +100,10 @@ for i, url in enumerate(seller_list):
             title = x.get_attribute("title")
             TITLE = str(title)
             price = str(y.text)
+            price_tl = price.split(',')[0]
+            price_tl = int(price_tl)
             print(price)
-            res_list.append((str(seller_name), str(title), (price)))
+            res_list.append((str(seller_name), str(title), (price_tl)))
 
         except Exception as inst:
             message = inst
@@ -122,12 +124,15 @@ end_time = time.time()
 print("Total Executione time: ", (end_time - start_time) / 60, "minutes...")
 file_name = sys.argv[1]
 mail_message = "Subject: {} \n\n".format(sys.argv[1])
-file = open('/home/om/Documents/{}.txt'.format(file_name), 'w')
+file = open('/home/om/Documents/ankaradakisahafkitap/{}.txt'.format(file_name), 'w')
 result_message = "Toplam " + str(len(res_list)) + " kitap bulunmustur."
 file.write(result_message)
+a = res_list[0][2]
+print("type of 131.line a: ", type(a))
+res_list.sort(key=lambda a: a[2])
 for obj in res_list:
-    mail_message = mail_message + " " + obj[0] + "-" + "-" + obj[1] + "-" + (obj[2]) + '\n\n'
-    file.write(obj[0] + "-" + "-" + obj[1] + "-" + (obj[2]) + '\n\n')
+    mail_message = mail_message + " " + obj[0] + "-" + "-" + obj[1] + "-" + str(obj[2]) + '\n\n'
+    file.write(obj[0] + "-" + "-" + obj[1] + "-" + str(obj[2]) + '\n\n')
 time.sleep(14)
 msg = mail_message.encode('utf-8')
 mailahmet(msg)
