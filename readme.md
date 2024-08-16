@@ -8,6 +8,7 @@ Install the following libraries:
 ## Linux
 ```bash
 sudo apt update
+pip3 install selenium
 pip3 install requests 
 pip3 install beautifulsoup4
 ```
