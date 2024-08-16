@@ -3,7 +3,6 @@ A Python program which searches and finds the desired book in second-hand book s
 All you need to do is to write the name of the book as parameter.
 ## Prerequisites
 Install Postgres if it is not already the case.
-Install a compatible [chrome-driver](https://developer.chrome.com/docs/chromedriver/downloads) for your browser.
 Install the following libraries:
 ## Linux
 ```bash
