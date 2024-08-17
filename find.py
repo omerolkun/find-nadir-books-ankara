@@ -67,7 +67,7 @@ result_message = "Toplam " + str(len(result_list)) + " kitap bulunmustur.\n\n"
 file.write(result_message)
 result_list.sort(key=lambda a: a[2])
 for obj in result_list:
-    mail_message = mail_message + " " + obj[0] + "-" + "-" + obj[1] + "-" + str(obj[2]) + '\n\n'
+    mail_message = mail_message + " " + obj[0] + "-" + obj[1] + "-" + str(obj[2]) + '\n\n'
     file.write(obj[0] + "-" + obj[1] + "-" + str(obj[2]) + '\n\n')
 time.sleep(14)
 msg = mail_message.encode('utf-8')
