@@ -51,8 +51,11 @@ for seller in result_urls:
         for single_row in rows:
             name = single_row.find('a')['title']
             price = single_row.find(class_="col-md-6 col-xs-12 no-padding text-right product-list-price").string
-            price_spl = re.split(r"[,.]", price)
-            int_price = int(price_spl[0])
+            try:
+                price_spl = re.split(r"[,.]", price)
+                int_price = int(price_spl[0])
+            except:
+                int_price = -1
             tup = (seller_name, name, int_price)
             result_list.append(tup)
 
