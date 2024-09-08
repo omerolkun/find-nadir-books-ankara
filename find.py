@@ -16,7 +16,7 @@ from info import info
 from mails import mailahmet
 from email.mime.text import MIMEText
 from bs4 import BeautifulSoup
-
+from book import Book
 
 start_time = time.time()
 (db_name, username, password) = info()[0]
