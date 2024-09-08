@@ -9,3 +9,6 @@ class Book:
 
     def get_name(self):
         return self._name
+
+    def __str__(self):
+        return f"Name: {self._name}\nAuthor: {self._author}\nPrice: {self._price}"
