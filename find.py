@@ -2,19 +2,11 @@ import time
 import re
 import cloudscraper
 import sys
-import requests
 import re
 from random import shuffle
 import psycopg2
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
-from selenium_stealth import stealth
 from info import info
 from mails import mailahmet
-from email.mime.text import MIMEText
 from bs4 import BeautifulSoup
 from book import Book
 
@@ -62,7 +54,7 @@ for seller in result_urls:
 for x in result_list:
     print(x)
 end_time = time.time()
-print("Total Executione time: ", (end_time - start_time) / 60, "minutes...")
+print("Total Executione time: ", round((end_time - start_time) / 60, 2), "minutes...")
 file_name = sys.argv[1]
 mail_message = "Subject: {} \n\n".format(sys.argv[1])
 file = open('/home/om/Documents/ankaradakisahafkitap/{}.txt'.format(file_name), 'w')

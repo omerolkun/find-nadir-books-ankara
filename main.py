@@ -1,20 +1,34 @@
 import time
 import math
+from random import shuffle
 import sys
 from bs4 import BeautifulSoup
 from book import Book
+from info import info
+import psycopg2
+
 import cloudscraper
 
 def main():
     start_time = time.time()
     book_name = sys.argv[1]
 
-    url = "https://www.nadirkitap.com/kitapara.php?satici=166344&ara=aramayap&tip=yazar&kitap_Adi={}".format(book_name)
-    url2 = "https://www.nadirkitap.com/kitapara.php?ara=aramayap&ref=&kategori=0&kitap_Adi=&yazar={}&ceviren=&hazirlayan=&siralama=&satici=166344&ortakkargo=0&yayin_Evi=&yayin_Yeri=&isbn=&fiyat1=&fiyat2=&tarih1=0&tarih2=0&guzelciltli=0&birincibaski=0&imzali=0&eskiyeni=0&cilt=0&listele=&tip=yazar&dil=0&page={}"
+    url = "https://www.nadirkitap.com/kitapara.php?ara=aramayap&ref=&kategori=0&kitap_Adi=&yazar={}&ceviren=&hazirlayan=&siralama=&satici=166344&ortakkargo=0&yayin_Evi=&yayin_Yeri=&isbn=&fiyat1=&fiyat2=&tarih1=0&tarih2=0&guzelciltli=0&birincibaski=0&imzali=0&eskiyeni=0&cilt=0&listele=&tip=yazar&dil=0&page={}"
     book_list = []
+    
+    (db_name, username, password) = info()[0]
+    seller_list = []
+    conn = psycopg2.connect(database=db_name, user=username, password=password, host='localhost', port='5432')
+    conn.autocommit = True
+    cursor = conn.cursor()
+    SQL_COMMAND = "select seller_link from sellers"
+    cursor.execute(SQL_COMMAND)
+    result = cursor.fetchall()
+    shuffle(result)
+
 
     scraper = cloudscraper.create_scraper()
-    page_content = scraper.get(url2.format(book_name, 1)).text
+    page_content = scraper.get(url.format(book_name, 1)).text
     soup = BeautifulSoup(page_content, "html.parser")
 
     total_item_number = soup.find('p', {"class": "icon no-icon aramap"}).text.split()[0]
@@ -40,7 +54,7 @@ def main():
     if int(total_item_number) > 1:
         i = 2
         while i < int(total_item_number) + 1:
-            page_content = scraper.get(url2.format(book_name, i)).text
+            page_content = scraper.get(url.format(book_name, i)).text
             soup = BeautifulSoup(page_content, "html.parser")
             product_list = soup.find('ul', class_="product-list")
             li_css = "body > div.section.margin-top-20px > div > div > div.col-md-9.col-xs-12 > div.list-cell > ul > li"
