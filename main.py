@@ -16,12 +16,18 @@ def main():
     soup = BeautifulSoup(page_content, "html.parser")
     product_list = soup.find('ul', class_="product-list")
     li_css = "body > div.section.margin-top-20px > div > div > div.col-md-9.col-xs-12 > div.list-cell > ul > li"
-    items = product_list.select(li_css)
-    #  icon no-icon aramap
     total_item_number = int(soup.find('p', {"class": "icon no-icon aramap"}).text.split()[0])
     page_number = math.ceil((total_item_number / 25))
     print(page_number, " pages", "type of page_number: ", type(page_number))
+    items = product_list.select(li_css)
+    
+    for book in items:
+        name = book.find('h4')
+        print(name.text.strip())
+        author = book.find('p')
+        print(author.text, "\n--")
 
+    
     end_time = time.time()
     print("exec time: ", round(end_time - start_time, 2), " seconds.")
 
