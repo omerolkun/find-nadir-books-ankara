@@ -8,6 +8,7 @@ import cloudscraper
 from bs4 import BeautifulSoup
 from book import Book
 from info import info
+from mails import mailahmet
 
 
 def main():
@@ -21,8 +22,7 @@ def main():
             result_author_name = result_author_name + x + "+"
 
         author_name = result_author_name[:-1]
-
-
+    
 
     book_list = []
     seller_list = []
@@ -90,14 +90,28 @@ def main():
                     author = item.find('p').text
                     price = item.find("div", {"class": "col-md-6 col-xs-12 no-padding text-right product-list-price"}).text.split()[0]
                     seller = (soup.find("h1", {"class": "aramatitle"}).text)[len(author_name) + 1:].replace("kitapları", "").strip()
-                    print("name: ", name, " author: ", author)
                     book = Book(name, author, price, seller)
                     book_list.append(book)
                 i = i + 1
     
     
     end_time = time.time()
-    print("exec time: ", round(end_time - start_time, 2), " seconds.")
+    print("exec time: ", round((end_time - start_time) / 60, 2), " minutes.")
+
+    mail_message = "Subject: {} \n\n".format(author_name)
+
+    file_name = author_name.replace("+", "_")
+    file = open('/home/om/Documents/author_in_sellers/{}.txt'.format(file_name), 'w')
+    result_message = "Toplam " + str(len(book_list)) + " kitap bulunmustur.\n"
+    i = 1 
+    for book in book_list:
+        mail_message = mail_message + str(i) + "." + book.get_seller() + ", " + book.get_name() + ", " + book.get_price() + "\n\n"
+        file.write(str(i) + "." + book.get_seller() + ", " + book.get_name() + ", " + book.get_price() + "\n")
+        i = i + 1
+    msg = mail_message.encode('utf-8')
+    mailahmet(msg)
+    print("Program is over...")
+
 
 
 if __name__ == "__main__":

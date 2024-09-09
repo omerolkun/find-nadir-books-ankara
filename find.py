@@ -55,12 +55,15 @@ for x in result_list:
     print(x)
 end_time = time.time()
 print("Total Executione time: ", round((end_time - start_time) / 60, 2), "minutes...")
+
 file_name = sys.argv[1]
 mail_message = "Subject: {} \n\n".format(sys.argv[1])
+
 file = open('/home/om/Documents/ankaradakisahafkitap/{}.txt'.format(file_name), 'w')
 result_message = "Toplam " + str(len(result_list)) + " kitap bulunmustur.\n\n"
 file.write(result_message)
 result_list.sort(key=lambda a: a[2])
+
 for obj in result_list:
     mail_message = mail_message + " " + obj[0] + "-" + obj[1] + "-" + str(obj[2]) + '\n\n'
     file.write(obj[0] + "-" + obj[1] + "-" + str(obj[2]) + '\n\n')
