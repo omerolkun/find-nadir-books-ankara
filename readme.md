@@ -29,3 +29,4 @@ Pull requests are welcome.
  * [x] List the books by the author.
  * [x] Send the result list mail to the user.
  * [ ] Add a front end for the project.
+ * [ ] Add address information(map) of sellers.
