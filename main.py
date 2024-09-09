@@ -97,10 +97,11 @@ def main():
     
     end_time = time.time()
     print("exec time: ", round((end_time - start_time) / 60, 2), " minutes.")
+    if "+" in author_name:
+        author_name = author_name.replace("+", "_")
 
     mail_message = "Subject: {} \n\n".format(author_name)
-
-    file_name = author_name.replace("+", "_")
+    file_name = author_name
     file = open('/home/om/Documents/author_in_sellers/{}.txt'.format(file_name), 'w')
     result_message = "Toplam " + str(len(book_list)) + " kitap bulunmustur.\n"
     i = 1 
