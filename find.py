@@ -24,11 +24,13 @@ TITLE = ""
 for row in result:
     seller_list.append(row[0])
 result_urls = []
+book_name = sys.argv[1]
 for url in seller_list:
     numbers = [int(s) for s in re.findall(r'\d+', url)]
     seller_code = numbers[0]
     result_url = url
-    result_url = "https://www.nadirkitap.com/kitapara.php?satici={code}&ara=aramayap&tip=kitap&kitap_Adi={book_name}".format(code=str(seller_code), book_name=sys.argv[1])
+    result_url = "https://www.nadirkitap.com/kitapara.php?satici={}&ara=aramayap&tip=kitap&kitap_Adi={}".format(seller_code, book_name)
+    result_url = "https://www.nadirkitap.com/kitapara.php?ara=aramayap&ref=&kategori=0&kitap_Adi={}&yazar=&ceviren=&hazirlayan=&siralama=&satici={}&ortakkargo=0&yayin_Evi=&yayin_Yeri=&isbn=&fiyat1=&fiyat2=&tarih1=0&tarih2=0&guzelciltli=0&birincibaski=0&imzali=0&eskiyeni=0&cilt=0&listele=&tip=kitap&dil=0&page=".format(seller_code, book_name)
     result_urls.append(result_url)
 
 result_list = []
