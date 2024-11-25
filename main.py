@@ -31,7 +31,7 @@ def main():
     conn = psycopg2.connect(database=db_name, user=username, password=password, host='localhost', port='5432')
     conn.autocommit = True
     cursor = conn.cursor()
-    SQL_COMMAND = "select seller_link, seller_name  from sellers"
+    SQL_COMMAND = "select seller_link, seller_name  from sellersank"
     cursor.execute(SQL_COMMAND)
     result = cursor.fetchall()
     shuffle(result)
@@ -53,11 +53,11 @@ def main():
 
         scraper = cloudscraper.create_scraper()
         page_content = scraper.get((url + "1")).text
+        print(url + "1")
         soup = BeautifulSoup(page_content, "html.parser")
 
         total_item_number = soup.find('p', {"class": "icon no-icon aramap"}).text.split()[0]
         if total_item_number == "Arama":
-            #print("Author {} is not found...".format(book_name))
             continue
 
         page_number = math.ceil((int(total_item_number) / 25))
@@ -102,7 +102,7 @@ def main():
 
     mail_message = "Subject: {} \n\n".format(author_name)
     file_name = author_name
-    file = open('/home/om/Documents/author_in_sellers/{}.txt'.format(file_name), 'w')
+    file = open('/home/dashone00//Documents/ankaradakisahafkitap/{}.txt'.format(file_name), 'w')
     result_message = "Toplam " + str(len(book_list)) + " kitap bulunmustur.\n"
     i = 1 
     for book in book_list:
