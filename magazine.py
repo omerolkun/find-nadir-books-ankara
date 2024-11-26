@@ -14,18 +14,17 @@ from book import Book
 from datetime import datetime
 
 
+
 def main():
     start_time = datetime.now().replace(microsecond=0)
     logging.basicConfig(filename='/home/dashone00/test-board/others/find-nadir-books-ankara/log.log', level=logging.INFO)
     logging.info("started at {}".format(str(start_time)))
 
-    if len(sys.argv) < 3:
-        print("Missing parameters. Format: python3 find.py book_name author_name")
-        print("If author_name doesn't matter, type * instead of a name")
+    if len(sys.argv) < 2:
+        print("Missing parameters. Format: python3 find.py magazine_name")
         print("End of program")
         sys.exit()
 
-    author = sys.argv[2]
     title = sys.argv[1]
     temp = ""
     if " " in title:
@@ -35,7 +34,7 @@ def main():
         title = temp[:-1]
 
 
-    generic_url = "https://www.nadirkitap.com/kitapara.php?satici={}&ara=aramayap&tip=kitap&kitap_Adi={}"
+    generic_url = "https://www.nadirkitap.com/kitapara.php?satici={}&ara=aramayap&tip=dergi&kitap_Adi={}"
     (db_name, username, password) = info()[0]
     seller_list = []
     conn = psycopg2.connect(database=db_name, user=username, password=password, host='localhost', port='5432')
@@ -62,18 +61,14 @@ def main():
         result_urls.append(generic_url.format(seller_code, title))
 
         
-    lst = get_books(result_urls)
-    logging.info("{} {} books are found.".format(title, str(len(lst))))
-    send_mail(lst, author)
+    lst = get_magazines(result_urls)
+    logging.info("{} {} magazines are found.".format(title, str(len(lst))))
+    send_mail(lst)
     end_time = datetime.now().replace(microsecond=0)
     logging.info("End of program at {}\n".format(str(end_time)))
 
-
-
-
-def get_books(result_urls):
+def get_magazines(result_urls):
     book_list = []
-    exception_cnt = 0
     for url in result_urls:
         scraper = cloudscraper.create_scraper()
         page_content = scraper.get(url).text
@@ -99,25 +94,18 @@ def get_books(result_urls):
         for product in products:
             information_block = product.find("h4")
             title = information_block.text.strip()
-            author = (product.find("p").text).lower()
             products_block = product.find_all("div", recursive=False)
             sec_blocks = products_block[1].find("div")
             price_block = sec_blocks.find_all("div", recursive=False)[1]
             price = price_block.find_all("div")[2].text
             price_int = price_text_to_int(price)
-            try:
-                publisher_block = products_block[1].find("ul")
-                publisher = publisher_block.find_all("li")[1].text
-            except:
-                exception_cnt = exception_cnt + 1
-                publisher = "no publisher"
             seller = (product.find("a", {"class": "seller-link"})).text
-            book_list.append((title, author, price_int, seller, publisher))
+            book_list.append((title,  price_int, seller))
         if page_number == 1:
             continue
         else:
             codes = extract_codes(url)
-            url3 = "https://www.nadirkitap.com/kitapara.php?ara=aramayap&ref=&kategori=0&kitap_Adi={}&yazar=&ceviren=&hazirlayan=&siralama=&satici={}&ortakkargo=0&yayin_Evi=&yayin_Yeri=&isbn=&fiyat1=&fiyat2=&tarih1=0&tarih2=0&guzelciltli=0&birincibaski=0&imzali=0&eskiyeni=0&cilt=0&listele=&tip=kitap&dil=0&page={}"
+            url3 = "https://www.nadirkitap.com/kitapara.php?ara=aramayap&ref=&kategori=0&kitap_Adi={}&yazar=&ceviren=&hazirlayan=&siralama=&satici={}&ortakkargo=0&yayin_Evi=&yayin_Yeri=&isbn=&fiyat1=&fiyat2=&tarih1=0&tarih2=0&guzelciltli=0&birincibaski=0&imzali=0&eskiyeni=0&cilt=0&listele=&tip=dergi&dil=0&page={}"
             for i in range(page_number - 1):
                 url = url3.format(codes[1], codes[0], str(i+2))
                 page_content = scraper.get(url).text
@@ -127,7 +115,6 @@ def get_books(result_urls):
                 for product in products:
                     information_block = product.find("h4")
                     title = information_block.text.strip()
-                    author = product.find("p").text
                     products_block = product.find_all("div", recursive=False)
                     sec_blocks = products_block[1].find("div")
                     price_block = sec_blocks.find_all("div", recursive=False)[1]
@@ -135,14 +122,7 @@ def get_books(result_urls):
                     price = price_text_to_int(price_text)
                     information_block = product.find("h4")
                     title = information_block.text.strip()
-                    try:
-                        publisher_block = products_block[1].find("ul")
-                        publisher = publisher_block.find_all("li")[1].text
-                    except:
-                        exception_cnt = exception_cnt + 1
-                        publisher = "no publisher"
-                    author = product.find("p").text
-                    book_list.append((title, author, price, seller, publisher))
+                    book_list.append((title,  price, seller))
     sorted_book_list = sorted(book_list, key=lambda tup: tup[2])        
     return sorted_book_list
 
@@ -173,21 +153,16 @@ def price_text_to_int(price_text):
 
 
 
-def send_mail(result_list, author):
-    print(len(result_list), ", ", author)
+def send_mail(result_list ):
+    print(len(result_list) )
     mail_message = "Subject: {} \n\n".format(sys.argv[1])
-    for idx, obj in enumerate(result_list):
-        if author == "*":
-            mail_message = mail_message + str(idx) + ". " + obj[3] + "-" + obj[0] + "-" +  obj[4] +"-" + obj[1] + "-" + str(obj[2]) + " TL " +  '\n\n'
-        if author == obj[1]:
-            mail_message = mail_message + str(idx) + ". " + obj[3] + "/" + obj[0] + "/" +  obj[4] +"/" + obj[1] + "/" + str(obj[2]) + " TL " +  '\n\n'
-        else:
-            print(author=="*")
-            print("here is interesting for ", str(obj))
-            continue
+    for obj in result_list:
+            mail_message = mail_message + str(obj[1]) + "-" + obj[2] + " TL " + "-" + obj[0] + '\n\n'
     time.sleep(14)
     msg = mail_message.encode('utf-8')
     mailahmet(msg)
+
+
 
 if __name__ == "__main__":
     main()
